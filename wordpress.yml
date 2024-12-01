@@ -1,0 +1,47 @@
+Voici un exemple de fichier `docker-compose.yml` qui déploie un WordPress relié à une base de données MySQL :
+```
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - db-data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    ports:
+      - "80:80"
+    volumes:
+      - wordpress-data:/var/www/html
+
+volumes:
+  db-data:
+  wordpress-data:
+```
+Ce fichier définit deux services :
+
+* `db` : un conteneur MySQL qui utilise l'image officielle `mysql:5.7`. On définit les variables d'environnement pour configurer la base de données, notamment le mot de passe root, le nom de la base de données, l'utilisateur et le mot de passe.
+* `wordpress` : un conteneur WordPress qui utilise l'image officielle `wordpress:latest`. On définit les variables d'environnement pour configurer la connexion à la base de données, notamment l'hôte, l'utilisateur, le mot de passe et le nom de la base de données. On expose également le port 80 pour accéder à WordPress.
+
+Les volumes sont utilisés pour persister les données de la base de données et de WordPress. Le volume `db-data` est utilisé pour stocker les données de la base de données, tandis que le volume `wordpress-data` est utilisé pour stocker les fichiers de WordPress.
+
+Pour lancer les conteneurs, il suffit de se placer dans le répertoire où se trouve le fichier `docker-compose.yml` et d'exécuter la commande suivante :
+```
+docker-compose up -d
+```
+Cette commande lance les conteneurs en mode détaché. Vous pouvez alors accéder à WordPress en vous connectant à l'adresse `http://localhost` dans votre navigateur.
+
+Note : il est important de remplacer les valeurs des variables d'environnement par des valeurs sécurisées, notamment les mots de passe.
